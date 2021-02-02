@@ -1,0 +1,35 @@
+---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: vcloud-csi-driver-metrics
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+
+spec:
+  selector:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/component: driver
+  ports:
+    - port: 8080
+      name: metrics
+      targetPort: metrics
+
+---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: vcloud-csi-node-metrics
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+
+spec:
+  selector:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/component: node
+  ports:
+    - port: 8080
+      name: metrics
+      targetPort: metrics

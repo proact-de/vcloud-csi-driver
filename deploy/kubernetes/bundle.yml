@@ -1,0 +1,773 @@
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud
+parameters:
+  storageProfile: default
+provisioner: vcloud.csi.proact.de
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-driver
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-node
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-attacher
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csinodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - volumeattachments
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-provisioner
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+  - watch
+  - create
+  - update
+  - patch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csinodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshots
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotcontents
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-registrar
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-resizer
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims/status
+  verbs:
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+  - watch
+  - create
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-snapshotter
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+  - watch
+  - create
+  - update
+  - patch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshotcontents
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - delete
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshots
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - snapshot.storage.k8s.io
+  resources:
+  - volumesnapshots/status
+  verbs:
+  - update
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - list
+  - watch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-attacher
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vcloud-csi-attacher
+subjects:
+- kind: ServiceAccount
+  name: vcloud-csi-driver
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-provisioner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vcloud-csi-provisioner
+subjects:
+- kind: ServiceAccount
+  name: vcloud-csi-driver
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-registrar
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vcloud-csi-registrar
+subjects:
+- kind: ServiceAccount
+  name: vcloud-csi-node
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-resizer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vcloud-csi-resizer
+subjects:
+- kind: ServiceAccount
+  name: vcloud-csi-driver
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-snapshotter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vcloud-csi-snapshotter
+subjects:
+- kind: ServiceAccount
+  name: vcloud-csi-driver
+  namespace: kube-system
+---
+apiVersion: v1
+data:
+  href: aHR0cHM6Ly92Y2xvdWQuZXhhbXBsZS5jb20vYXBp
+  org: bXktb3Jn
+  password: cDQ1NXcwcmQ=
+  username: dXNlcm5hbWU=
+  vdcs: bXktdmRj
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-driver-99t6729dht
+  namespace: kube-system
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-driver-metrics
+  namespace: kube-system
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: metrics
+  selector:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-node-metrics
+  namespace: kube-system
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: metrics
+  selector:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: driver
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-driver
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: driver
+      app.kubernetes.io/name: vcloud-csi-driver
+      app.kubernetes.io/version: 1.0.0-alpha1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: driver
+        app.kubernetes.io/name: vcloud-csi-driver
+        app.kubernetes.io/version: 1.0.0-alpha1
+    spec:
+      containers:
+      - env:
+        - name: VCLOUD_CSI_NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: VCLOUD_CSI_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VCLOUD_CSI_PODIP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: VCLOUD_CSI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_ORG
+          valueFrom:
+            secretKeyRef:
+              key: org
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_VDCS
+          valueFrom:
+            secretKeyRef:
+              key: vdcs
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_HREF
+          valueFrom:
+            secretKeyRef:
+              key: href
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_ENDOINT
+          value: unix:///csi/csi.sock
+        image: docker.io/proactcloud/vcloud-csi-driver:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /healthz
+            port: metrics
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
+        name: csi-vcloud
+        ports:
+        - containerPort: 8080
+          name: metrics
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --leader-election
+        - --default-fstype=ext4
+        - --feature-gates=Topology=true
+        - --strict-topology
+        image: k8s.gcr.io/sig-storage/csi-provisioner:v2.0.4
+        imagePullPolicy: Always
+        name: csi-provisioner
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --leader-election
+        image: k8s.gcr.io/sig-storage/csi-attacher:v3.0.2
+        imagePullPolicy: Always
+        name: csi-attacher
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --leader-election
+        image: k8s.gcr.io/sig-storage/csi-resizer:v1.0.1
+        imagePullPolicy: Always
+        name: csi-resizer
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --leader-election
+        image: k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.2
+        imagePullPolicy: Always
+        name: csi-snapshotter
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --csi-address=/csi/csi.sock
+        image: k8s.gcr.io/sig-storage/livenessprobe:v2.1.0
+        imagePullPolicy: Always
+        name: liveness-probe
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      priorityClassName: system-cluster-critical
+      serviceAccountName: vcloud-csi-driver
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - emptyDir: {}
+        name: socket
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud-csi-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: node
+      app.kubernetes.io/name: vcloud-csi-driver
+      app.kubernetes.io/version: 1.0.0-alpha1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: node
+        app.kubernetes.io/name: vcloud-csi-driver
+        app.kubernetes.io/version: 1.0.0-alpha1
+    spec:
+      containers:
+      - env:
+        - name: VCLOUD_CSI_NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: VCLOUD_CSI_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VCLOUD_CSI_PODIP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: VCLOUD_CSI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_ORG
+          valueFrom:
+            secretKeyRef:
+              key: org
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_VDCS
+          valueFrom:
+            secretKeyRef:
+              key: vdcs
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_HREF
+          valueFrom:
+            secretKeyRef:
+              key: href
+              name: vcloud-csi-driver-99t6729dht
+        - name: VCLOUD_CSI_ENDOINT
+          value: unix:///csi/csi.sock
+        image: docker.io/proactcloud/vcloud-csi-driver:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /healthz
+            port: metrics
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
+        name: node-vcloud
+        ports:
+        - containerPort: 8080
+          name: metrics
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin
+        - mountPath: /var/lib/kubelet
+          mountPropagation: Bidirectional
+          name: kubelet
+        - mountPath: /dev
+          mountPropagation: HostToContainer
+          name: device
+        - mountPath: /run
+          mountPropagation: HostToContainer
+          name: host
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --kubelet-registration-path=/var/lib/kubelet/plugins/vcloud.csi.proact.de/csi.sock
+        env:
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+        imagePullPolicy: Always
+        name: node-registrar
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin
+        - mountPath: /registration
+          name: registry
+      - args:
+        - --csi-address=/csi/csi.sock
+        image: k8s.gcr.io/sig-storage/livenessprobe:v2.1.0
+        imagePullPolicy: Always
+        name: liveness-probe
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin
+      priorityClassName: system-node-critical
+      serviceAccountName: vcloud-csi-node
+      tolerations:
+      - effect: NoExecute
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet
+          type: Directory
+        name: kubelet
+      - hostPath:
+          path: /var/lib/kubelet/plugins/vcloud.csi.proact.de/
+          type: DirectoryOrCreate
+        name: plugin
+      - hostPath:
+          path: /var/lib/kubelet/plugins_registry/
+          type: Directory
+        name: registry
+      - hostPath:
+          path: /dev
+          type: Directory
+        name: device
+---
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/version: 1.0.0-alpha1
+  name: vcloud.csi.proact.de
+spec:
+  attachRequired: true
+  podInfoOnMount: true
+  volumeLifecycleModes:
+  - Persistent

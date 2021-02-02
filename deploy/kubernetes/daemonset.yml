@@ -1,0 +1,150 @@
+kind: DaemonSet
+apiVersion: apps/v1
+
+metadata:
+  name: vcloud-csi-node
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/component: node
+
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vcloud-csi-driver
+      app.kubernetes.io/component: node
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vcloud-csi-driver
+        app.kubernetes.io/component: node
+
+    spec:
+      serviceAccountName: vcloud-csi-node
+      priorityClassName: system-node-critical
+
+      tolerations:
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+        - key: CriticalAddonsOnly
+          operator: Exists
+
+      containers:
+        - name: node-vcloud
+          image: vcloud-driver
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          env:
+            - name: VCLOUD_CSI_NODENAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: VCLOUD_CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: VCLOUD_CSI_PODIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: VCLOUD_CSI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: username
+            - name: VCLOUD_CSI_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: password
+            - name: VCLOUD_CSI_ORG
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: org
+            - name: VCLOUD_CSI_VDCS
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: vdcs
+            - name: VCLOUD_CSI_HREF
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: href
+            - name: VCLOUD_CSI_ENDOINT
+              value: "unix:///csi/csi.sock"
+          ports:
+            - name: metrics
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 3
+            periodSeconds: 2
+          volumeMounts:
+            - name: plugin
+              mountPath: /csi
+            - name: kubelet
+              mountPath: /var/lib/kubelet
+              mountPropagation: Bidirectional
+            - name: device
+              mountPath: /dev
+              mountPropagation: HostToContainer
+            - name: host
+              mountPath: /run
+              mountPropagation: HostToContainer
+
+        - name: node-registrar
+          image: node-registrar
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/vcloud.csi.proact.de/csi.sock
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: plugin
+              mountPath: /csi
+            - name: registry
+              mountPath: /registration
+
+        - name: liveness-probe
+          image: liveness-probe
+          imagePullPolicy: Always
+          args:
+            - --csi-address=/csi/csi.sock
+          volumeMounts:
+            - name: plugin
+              mountPath: /csi
+
+      volumes:
+        - name: kubelet
+          hostPath:
+            path: /var/lib/kubelet
+            type: Directory
+        - name: plugin
+          hostPath:
+            path: /var/lib/kubelet/plugins/vcloud.csi.proact.de/
+            type: DirectoryOrCreate
+        - name: registry
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: Directory
+        - name: device
+          hostPath:
+            path: /dev
+            type: Directory

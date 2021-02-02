@@ -1,0 +1,176 @@
+kind: Deployment
+apiVersion: apps/v1
+
+metadata:
+  name: vcloud-csi-driver
+  labels:
+    app.kubernetes.io/name: vcloud-csi-driver
+    app.kubernetes.io/component: driver
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vcloud-csi-driver
+      app.kubernetes.io/component: driver
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vcloud-csi-driver
+        app.kubernetes.io/component: driver
+
+    spec:
+      serviceAccountName: vcloud-csi-driver
+      priorityClassName: system-cluster-critical
+
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+        - operator: Exists
+          effect: NoExecute
+
+      containers:
+        - name: csi-vcloud
+          image: vcloud-driver
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+          env:
+            - name: VCLOUD_CSI_NODENAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: VCLOUD_CSI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: VCLOUD_CSI_PODIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: VCLOUD_CSI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: username
+            - name: VCLOUD_CSI_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: password
+            - name: VCLOUD_CSI_ORG
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: org
+            - name: VCLOUD_CSI_VDCS
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: vdcs
+            - name: VCLOUD_CSI_HREF
+              valueFrom:
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: href
+            - name: VCLOUD_CSI_ENDOINT
+              value: "unix:///csi/csi.sock"
+          ports:
+            - name: metrics
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 3
+            periodSeconds: 2
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+        - name: csi-provisioner
+          image: csi-provisioner
+          imagePullPolicy: Always
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --leader-election
+            - --default-fstype=ext4
+            - --feature-gates=Topology=true
+            - --strict-topology
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+        - name: csi-attacher
+          image: csi-attacher
+          imagePullPolicy: Always
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --leader-election
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+        - name: csi-resizer
+          image: csi-resizer
+          imagePullPolicy: Always
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --leader-election
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+        - name: csi-snapshotter
+          image: csi-snapshotter
+          imagePullPolicy: Always
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --leader-election
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+        - name: liveness-probe
+          image: liveness-probe
+          imagePullPolicy: Always
+          args:
+            - --csi-address=/csi/csi.sock
+          volumeMounts:
+            - name: socket
+              mountPath: /csi
+
+      volumes:
+        - name: socket
+          emptyDir: {}

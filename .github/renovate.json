@@ -1,0 +1,18 @@
+{
+    "extends": [
+        "config:base",
+        ":automergeMinor",
+        ":automergeDigest"
+    ],
+    "enabledManagers": [
+        "gomod"
+    ],
+    "gomod": {
+        "postUpdateOptions": [
+            "gomodTidy"
+        ]
+    },
+    "labels": [
+        "renovate"
+    ]
+}

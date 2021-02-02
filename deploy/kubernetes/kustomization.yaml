@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+commonLabels:
+  app.kubernetes.io/version: 1.0.0-alpha1
+
+resources:
+  - serviceaccount.yml
+  - clusterrole.yml
+  - clusterrolebinding.yml
+
+  - csidriver.yml
+  - storageclass.yml
+
+  - service.yml
+  - deployment.yml
+  - daemonset.yml
+
+secretGenerator:
+- name: vcloud-csi-driver
+  literals:
+    - username=username
+    - password=p455w0rd
+    - org=my-org
+    - vdcs=my-vdc
+    - href=https://vcloud.example.com/api
+
+images:
+  - name: vcloud-driver
+    newName: docker.io/proactcloud/vcloud-csi-driver
+    newTag: "latest"
+
+  - name: csi-provisioner
+    newName: k8s.gcr.io/sig-storage/csi-provisioner
+    newTag: "v2.0.4"
+  - name: csi-attacher
+    newName: k8s.gcr.io/sig-storage/csi-attacher
+    newTag: "v3.0.2"
+  - name: csi-resizer
+    newName: k8s.gcr.io/sig-storage/csi-resizer
+    newTag: "v1.0.1"
+  - name: csi-snapshotter
+    newName: k8s.gcr.io/sig-storage/csi-snapshotter
+    newTag: "v3.0.2"
+
+  - name: node-registrar
+    newName: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+    newTag: "v2.0.1"
+
+  - name: liveness-probe
+    newName: k8s.gcr.io/sig-storage/livenessprobe
+    newTag: "v2.1.0"
