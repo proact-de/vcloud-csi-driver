@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"net"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/container-storage-interface/spec/lib/go/csi"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/oklog/run"
 	"github.com/proact-de/vcloud-csi-driver/pkg/config"
+	"github.com/proact-de/vcloud-csi-driver/pkg/metrics"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/controller"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/identity"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/mount"
@@ -199,35 +203,83 @@ func main() {
 
 			var gr run.Group
 
-			{
-				server := grpc.NewServer(
-				// grpc.UnaryInterceptor(
-				// grpc_middleware.ChainUnaryServer(
-				// 	requestLogger(log.With(logger, "component", "grpc-server")),
-				// 	metrics.UnaryServerInterceptor(),
-				// ),
-				// ),
-				)
+			metricsServer := metrics.NewServer()
 
-				csi.RegisterIdentityServer(server, identityService)
-				csi.RegisterControllerServer(server, controllerService)
-				csi.RegisterNodeServer(server, nodeService)
+			grpcServer := grpc.NewServer(
+				grpc.UnaryInterceptor(
+					grpc_middleware.ChainUnaryServer(
+						func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+							log.Debug().
+								Interface("req", req).
+								Msg("Handling request")
 
-				gr.Add(func() error {
+							resp, err := handler(ctx, req)
+
+							if err != nil {
+								log.Error().
+									Err(err).
+									Interface("req", req).
+									Interface("resp", resp).
+									Msg("Handling failed")
+
+								return resp, err
+							}
+
+							log.Debug().
+								Msg("Handling finished")
+
+							return resp, err
+						},
+						metricsServer.UnaryServerInterceptor(),
+					),
+				),
+			)
+
+			metricsServer.InitializeMetrics(grpcServer)
+
+			csi.RegisterIdentityServer(grpcServer, identityService)
+			csi.RegisterControllerServer(grpcServer, controllerService)
+			csi.RegisterNodeServer(grpcServer, nodeService)
+
+			gr.Add(func() error {
+				log.Info().
+					Str("server", "grpc").
+					Msg("Starting server")
+
+				return grpcServer.Serve(listener)
+			}, func(reason error) {
+				grpcServer.GracefulStop()
+
+				log.Info().
+					Err(reason).
+					Str("server", "grpc").
+					Msg("Shutdown gracefully")
+			})
+
+			gr.Add(func() error {
+				log.Info().
+					Str("server", "metrics").
+					Msg("Starting server")
+
+				return metricsServer.ListenAndServe()
+			}, func(reason error) {
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+
+				if err := metricsServer.Shutdown(ctx); err != nil {
 					log.Info().
-						Str("server", "grpc").
-						Msg("Starting server")
+						Err(err).
+						Str("server", "metrics").
+						Msg("Shutdown failed")
 
-					return server.Serve(listener)
-				}, func(reason error) {
-					server.GracefulStop()
+					return
+				}
 
-					log.Info().
-						Err(reason).
-						Str("server", "grpc").
-						Msg("Shutdown grpc gracefully")
-				})
-			}
+				log.Info().
+					Err(reason).
+					Str("server", "metrics").
+					Msg("Shutdown gracefully")
+			})
 
 			{
 				stop := make(chan os.Signal, 1)

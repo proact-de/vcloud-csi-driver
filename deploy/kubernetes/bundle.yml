@@ -524,6 +524,14 @@ spec:
         ports:
         - containerPort: 8080
           name: metrics
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /readyz
+            port: metrics
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
         securityContext:
           allowPrivilegeEscalation: true
           capabilities:
@@ -691,6 +699,14 @@ spec:
         ports:
         - containerPort: 8080
           name: metrics
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /readyz
+            port: metrics
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
         securityContext:
           privileged: true
         volumeMounts:

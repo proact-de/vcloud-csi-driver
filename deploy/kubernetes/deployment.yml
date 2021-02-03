@@ -93,6 +93,14 @@ spec:
             failureThreshold: 5
             timeoutSeconds: 3
             periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: metrics
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 3
+            periodSeconds: 2
           volumeMounts:
             - name: socket
               mountPath: /csi

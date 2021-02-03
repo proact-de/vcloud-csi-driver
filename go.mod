@@ -5,6 +5,8 @@ go 1.15
 require (
 	github.com/container-storage-interface/spec v1.3.0
 	github.com/golang/protobuf v1.4.3
+	github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4
+	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/oklog/run v1.0.0
 	github.com/prometheus/client_golang v1.9.0
 	github.com/rs/zerolog v1.20.0
