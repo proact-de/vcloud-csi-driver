@@ -4,11 +4,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// Collector simply exports the version information for Prometheus.
-func Collector(ns string) *prometheus.GaugeVec {
+// NewCollector simply exports the version information for Prometheus.
+func NewCollector() *prometheus.GaugeVec {
 	info := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: ns,
+			Namespace: "vcloud_csi",
 			Name:      "build_info",
 			Help:      "A metric with a constant '1' value labeled by version, revision and goversion from which it was built.",
 		},
