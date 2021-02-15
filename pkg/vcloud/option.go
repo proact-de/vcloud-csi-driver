@@ -1,16 +1,20 @@
 package vcloud
 
+import (
+	"net/url"
+)
+
 // Option defines a single option function.
 type Option func(o *Options)
 
 // Options defines the available options for this package.
 type Options struct {
-	Href        string
-	Insecure    bool
-	Username    string
-	Password    string
-	Org         string
-	Datacenters []string
+	Href         *url.URL
+	Insecure     bool
+	Username     string
+	Password     string
+	Organization string
+	Datacenter   string
 }
 
 // newOptions initializes the available default options.
@@ -25,7 +29,7 @@ func newOptions(opts ...Option) Options {
 }
 
 // WithHref provides a function to set the href option.
-func WithHref(v string) Option {
+func WithHref(v *url.URL) Option {
 	return func(o *Options) {
 		o.Href = v
 	}
@@ -52,16 +56,16 @@ func WithPassword(v string) Option {
 	}
 }
 
-// WithOrg provides a function to set the org option.
-func WithOrg(v string) Option {
+// WithOrganization provides a function to set the organization option.
+func WithOrganization(v string) Option {
 	return func(o *Options) {
-		o.Org = v
+		o.Organization = v
 	}
 }
 
-// WithDatacenters provides a function to set the datacenters option.
-func WithDatacenters(v []string) Option {
+// WithDatacenter provides a function to set the datacenter option.
+func WithDatacenter(v string) Option {
 	return func(o *Options) {
-		o.Datacenters = v
+		o.Datacenter = v
 	}
 }

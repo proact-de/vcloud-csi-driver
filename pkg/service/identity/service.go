@@ -2,32 +2,23 @@ package identity
 
 import (
 	"context"
-	"sync"
 
 	"github.com/container-storage-interface/spec/lib/go/csi"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/proact-de/vcloud-csi-driver/pkg/version"
 )
 
 // Service defines the service for the identity component.
 type Service struct {
 	options Options
-	mutex   sync.RWMutex
-	ready   bool
 }
 
 // NewService simply initializes a new identity service.
 func NewService(opts ...Option) *Service {
-	return &Service{
-		options: newOptions(opts...),
-	}
-}
+	options := newOptions(opts...)
 
-// SetReady simply enables or disables the ready flag of the identity service.
-func (s *Service) SetReady(ready bool) {
-	s.mutex.Lock()
-	s.ready = ready
-	s.mutex.Unlock()
+	return &Service{
+		options: options,
+	}
 }
 
 // GetPluginInfo implements the CSI standard definition.
@@ -72,21 +63,4 @@ func (s *Service) GetPluginCapabilities(context.Context, *csi.GetPluginCapabilit
 			},
 		},
 	}, nil
-}
-
-// Probe implements the CSI standard definition.
-func (s *Service) Probe(context.Context, *csi.ProbeRequest) (*csi.ProbeResponse, error) {
-	return &csi.ProbeResponse{
-		Ready: &wrappers.BoolValue{
-			Value: s.isReady(),
-		},
-	}, nil
-}
-
-func (s *Service) isReady() bool {
-	s.mutex.RLock()
-	ready := s.ready
-	s.mutex.RUnlock()
-
-	return ready
 }

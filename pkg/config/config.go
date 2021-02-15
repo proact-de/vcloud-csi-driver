@@ -1,9 +1,5 @@
 package config
 
-import (
-	"github.com/urfave/cli/v2"
-)
-
 // Logs defines the level and color for log configuration.
 type Logs struct {
 	Level  string
@@ -13,13 +9,13 @@ type Logs struct {
 
 // Driver defines the driver configuration.
 type Driver struct {
-	Href        string
-	Insecure    bool
-	Username    string
-	Password    string
-	Org         string
-	Datacenters cli.StringSlice
-	Endpoint    string
+	Href         string
+	Insecure     bool
+	Username     string
+	Password     string
+	Organization string
+	Datacenter   string
+	Endpoint     string
 }
 
 // Kubernetes defines the kubernetes configuration.

@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -19,7 +21,6 @@ import (
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/mount"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/node"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/resize"
-	"github.com/proact-de/vcloud-csi-driver/pkg/service/stats"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/volume"
 	"github.com/proact-de/vcloud-csi-driver/pkg/vcloud"
 	"github.com/proact-de/vcloud-csi-driver/pkg/version"
@@ -117,14 +118,14 @@ func main() {
 				Value:       "",
 				Usage:       "Organization for vCloud Director",
 				EnvVars:     []string{"VCLOUD_CSI_ORG"},
-				Destination: &cfg.Driver.Org,
+				Destination: &cfg.Driver.Organization,
 			},
-			&cli.StringSliceFlag{
+			&cli.StringFlag{
 				Name:        "vcloud-vdc",
-				Value:       cli.NewStringSlice(),
+				Value:       "",
 				Usage:       "VDCs for vCloud Director",
-				EnvVars:     []string{"VCLOUD_CSI_VDCS"},
-				Destination: &cfg.Driver.Datacenters,
+				EnvVars:     []string{"VCLOUD_CSI_VDC"},
+				Destination: &cfg.Driver.Datacenter,
 			},
 			&cli.StringFlag{
 				Name:        "csi-endpoint",
@@ -160,32 +161,66 @@ func main() {
 				Str("go", version.Go).
 				Msg("vCloud Director CSI driver")
 
-			client := vcloud.NewClient(
-				vcloud.WithHref(cfg.Driver.Href),
+			clientHref, err := url.Parse(cfg.Driver.Href)
+
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("Failed to parse vCloud Director URL")
+
+				return errors.New("failed to parse vcloud director url")
+			}
+
+			client, err := vcloud.NewClient(
+				vcloud.WithHref(clientHref),
 				vcloud.WithInsecure(cfg.Driver.Insecure),
 				vcloud.WithUsername(cfg.Driver.Username),
 				vcloud.WithPassword(cfg.Driver.Password),
-				vcloud.WithOrg(cfg.Driver.Org),
-				vcloud.WithDatacenters(cfg.Driver.Datacenters.Value()),
+				vcloud.WithOrganization(cfg.Driver.Organization),
+				vcloud.WithDatacenter(cfg.Driver.Datacenter),
 			)
 
-			volumeService := volume.NewService()
-			mountService := mount.NewService()
-			resizeService := resize.NewService()
-			statsService := stats.NewService()
-			identityService := identity.NewService()
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("Failed to init vCloud Director client")
 
-			controllerService := controller.NewService(
+				return errors.New("failed to init vcloud director client")
+			}
+
+			disks, err := client.List()
+
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("")
+			}
+
+			log.Info().
+				Interface("disks", disks).
+				Msg("")
+
+			os.Exit(1)
+
+			volumeService := volume.NewService(
+				volume.WithClient(client),
+			)
+
+			ctrlService := controller.NewService(
+				controller.WithServer(cfg.Kubernetes.Nodename),
+				controller.WithDatacenter(cfg.Driver.Datacenter),
 				controller.WithVolume(volumeService),
 			)
 
 			nodeService := node.NewService(
-				node.WithClient(client),
+				node.WithServer(cfg.Kubernetes.Nodename),
+				node.WithDatacenter(cfg.Driver.Datacenter),
 				node.WithVolume(volumeService),
-				node.WithMount(mountService),
-				node.WithResize(resizeService),
-				node.WithStats(statsService),
+				node.WithMount(mount.NewService()),
+				node.WithResize(resize.NewService()),
 			)
+
+			identityService := identity.NewService()
 
 			listener, err := net.Listen(
 				"unix",
@@ -237,9 +272,9 @@ func main() {
 
 			metricsServer.InitializeMetrics(grpcServer)
 
-			csi.RegisterIdentityServer(grpcServer, identityService)
-			csi.RegisterControllerServer(grpcServer, controllerService)
+			csi.RegisterControllerServer(grpcServer, ctrlService)
 			csi.RegisterNodeServer(grpcServer, nodeService)
+			csi.RegisterIdentityServer(grpcServer, identityService)
 
 			gr.Add(func() error {
 				log.Info().

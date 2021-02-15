@@ -2,153 +2,99 @@ package controller
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/container-storage-interface/spec/lib/go/csi"
-	"github.com/rs/zerolog/log"
+	"github.com/proact-de/vcloud-csi-driver/pkg/service/volume"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+const (
+	// MinVolumeSize defines the minimum volume size.
+	MinVolumeSize int64 = 1073741824
+
+	// MaxVolumeSize defines the maximum volume size.
+	MaxVolumeSize int64 = 10995116277760
+
+	// DefaultVolumeSize defines the default volume size.
+	DefaultVolumeSize int64 = 5368709120
+
+	// TopologyKey defines the topology key for kubernetes.
+	TopologyKey = "failure-domain.beta.kubernetes.io/zone"
+)
+
 // Service defines the service for the controller component.
 type Service struct {
-	options Options
+	server     string
+	datacenter string
+	volume     *volume.Service
 }
 
 // NewService simply initializes a new controller service.
 func NewService(opts ...Option) *Service {
+	options := newOptions(opts...)
+
 	return &Service{
-		options: newOptions(opts...),
+		server:     options.Server,
+		datacenter: options.Datacenter,
+		volume:     options.Volume,
 	}
+}
+
+// ListVolumes implements the CSI standard definition.
+func (s *Service) ListVolumes(ctx context.Context, req *csi.ListVolumesRequest) (*csi.ListVolumesResponse, error) {
+	resp := &csi.ListVolumesResponse{}
+	volumes, err := s.volume.List(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, volume := range volumes {
+		resp.Entries = append(
+			resp.Entries,
+			&csi.ListVolumesResponse_Entry{
+				Volume: &csi.Volume{
+					VolumeId:      volume.Name,
+					CapacityBytes: volume.Size,
+				},
+			},
+		)
+	}
+
+	return resp, nil
 }
 
 // GetCapacity implements the CSI standard definition.
 func (s *Service) GetCapacity(ctx context.Context, req *csi.GetCapacityRequest) (*csi.GetCapacityResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "GetCapacity").
-		Msg("")
-
 	return nil, status.Error(codes.Unimplemented, "not implemented")
 }
 
 // ValidateVolumeCapabilities implements the CSI standard definition.
 func (s *Service) ValidateVolumeCapabilities(ctx context.Context, req *csi.ValidateVolumeCapabilitiesRequest) (*csi.ValidateVolumeCapabilitiesResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ValidateVolumeCapabilities").
-		Msg("")
+	if req.VolumeId == "" {
+		return nil, status.Error(codes.InvalidArgument, "missing volume id")
+	}
 
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
+	if len(req.VolumeCapabilities) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "missing volume capabilities")
+	}
 
-// ListVolumes implements the CSI standard definition.
-func (s *Service) ListVolumes(ctx context.Context, req *csi.ListVolumesRequest) (*csi.ListVolumesResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ListVolumes").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// CreateVolume implements the CSI standard definition.
-func (s *Service) CreateVolume(ctx context.Context, req *csi.CreateVolumeRequest) (*csi.CreateVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "CreateVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// DeleteVolume implements the CSI standard definition.
-func (s *Service) DeleteVolume(ctx context.Context, req *csi.DeleteVolumeRequest) (*csi.DeleteVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "DeleteVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// ListSnapshots implements the CSI standard definition.
-func (s *Service) ListSnapshots(ctx context.Context, req *csi.ListSnapshotsRequest) (*csi.ListSnapshotsResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ListSnapshots").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// CreateSnapshot implements the CSI standard definition.
-func (s *Service) CreateSnapshot(ctx context.Context, req *csi.CreateSnapshotRequest) (*csi.CreateSnapshotResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "CreateSnapshot").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// DeleteSnapshot implements the CSI standard definition.
-func (s *Service) DeleteSnapshot(ctx context.Context, req *csi.DeleteSnapshotRequest) (*csi.DeleteSnapshotResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "DeleteSnapshot").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// ControllerGetVolume implements the CSI standard definition.
-func (s *Service) ControllerGetVolume(ctx context.Context, req *csi.ControllerGetVolumeRequest) (*csi.ControllerGetVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ControllerGetVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// ControllerExpandVolume implements the CSI standard definition.
-func (s *Service) ControllerExpandVolume(ctx context.Context, req *csi.ControllerExpandVolumeRequest) (*csi.ControllerExpandVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ControllerExpandVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// ControllerPublishVolume implements the CSI standard definition.
-func (s *Service) ControllerPublishVolume(ctx context.Context, req *csi.ControllerPublishVolumeRequest) (*csi.ControllerPublishVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ControllerPublishVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
-// ControllerUnpublishVolume implements the CSI standard definition.
-func (s *Service) ControllerUnpublishVolume(ctx context.Context, req *csi.ControllerUnpublishVolumeRequest) (*csi.ControllerUnpublishVolumeResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ControllerUnpublishVolume").
-		Msg("")
-
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	return &csi.ValidateVolumeCapabilitiesResponse{
+		Confirmed: &csi.ValidateVolumeCapabilitiesResponse_Confirmed{
+			VolumeCapabilities: []*csi.VolumeCapability{
+				{
+					AccessMode: &csi.VolumeCapability_AccessMode{
+						Mode: csi.VolumeCapability_AccessMode_SINGLE_NODE_WRITER,
+					},
+				},
+			},
+		},
+	}, nil
 }
 
 // ControllerGetCapabilities implements the CSI standard definition.
 func (s *Service) ControllerGetCapabilities(ctx context.Context, req *csi.ControllerGetCapabilitiesRequest) (*csi.ControllerGetCapabilitiesResponse, error) {
-	log.Info().
-		Str("req", fmt.Sprintf("%+v", req)).
-		Str("method", "ControllerGetCapabilities").
-		Msg("")
-
 	return &csi.ControllerGetCapabilitiesResponse{
 		Capabilities: []*csi.ControllerServiceCapability{
 			{
@@ -182,42 +128,7 @@ func (s *Service) ControllerGetCapabilities(ctx context.Context, req *csi.Contro
 			{
 				Type: &csi.ControllerServiceCapability_Rpc{
 					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_CREATE_DELETE_SNAPSHOT,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_LIST_SNAPSHOTS,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_CLONE_VOLUME,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_PUBLISH_READONLY,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
 						Type: csi.ControllerServiceCapability_RPC_EXPAND_VOLUME,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_LIST_VOLUMES_PUBLISHED_NODES,
 					},
 				},
 			},

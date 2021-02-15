@@ -105,16 +105,13 @@ spec:
             - name: socket
               mountPath: /csi
 
-        - name: csi-provisioner
-          image: csi-provisioner
+        - name: csi-attacher
+          image: csi-attacher
           imagePullPolicy: Always
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
             - --leader-election
-            - --default-fstype=ext4
-            - --feature-gates=Topology=true
-            - --strict-topology
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
@@ -125,13 +122,16 @@ spec:
             - name: socket
               mountPath: /csi
 
-        - name: csi-attacher
-          image: csi-attacher
+        - name: csi-provisioner
+          image: csi-provisioner
           imagePullPolicy: Always
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
             - --leader-election
+            - --default-fstype=ext4
+            - --feature-gates=Topology=true
+            - --strict-topology
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
@@ -155,17 +155,6 @@ spec:
             capabilities:
               add:
                 - SYS_ADMIN
-          volumeMounts:
-            - name: socket
-              mountPath: /csi
-
-        - name: csi-snapshotter
-          image: csi-snapshotter
-          imagePullPolicy: Always
-          args:
-            - --v=5
-            - --csi-address=/csi/csi.sock
-            - --leader-election
           volumeMounts:
             - name: socket
               mountPath: /csi

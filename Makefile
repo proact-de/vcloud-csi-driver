@@ -84,8 +84,8 @@ changelog: $(CALENS)
 	$(CALENS) >| CHANGELOG.md
 
 .PHONY: test
-test: $(GOVERAGE)
-	$(GOVERAGE) -v -coverprofile coverage.out $(PACKAGES)
+test:
+	go test -coverprofile coverage.out $(PACKAGES)
 
 .PHONY: build
 build: $(BIN)/$(EXECUTABLE)
@@ -95,3 +95,7 @@ $(BIN)/$(EXECUTABLE): $(SOURCES)
 
 $(BIN)/$(EXECUTABLE)-debug: $(SOURCES)
 	$(GOBUILD) -v -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -gcflags '$(GCFLAGS)' -o $@ ./cmd/$(NAME)
+
+.PHONY: watch
+watch:
+	$(REFLEX) -c reflex.conf

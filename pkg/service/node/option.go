@@ -3,9 +3,7 @@ package node
 import (
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/mount"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/resize"
-	"github.com/proact-de/vcloud-csi-driver/pkg/service/stats"
 	"github.com/proact-de/vcloud-csi-driver/pkg/service/volume"
-	"github.com/proact-de/vcloud-csi-driver/pkg/vcloud"
 )
 
 // Option defines a single option function.
@@ -13,11 +11,11 @@ type Option func(o *Options)
 
 // Options defines the available options for this package.
 type Options struct {
-	Client *vcloud.Client
-	Volume *volume.Service
-	Mount  *mount.Service
-	Resize *resize.Service
-	Stats  *stats.Service
+	Server     string
+	Datacenter string
+	Volume     *volume.Service
+	Mount      *mount.Service
+	Resize     *resize.Service
 }
 
 // newOptions initializes the available default options.
@@ -31,10 +29,17 @@ func newOptions(opts ...Option) Options {
 	return opt
 }
 
-// WithClient provides a function to set the client option.
-func WithClient(v *vcloud.Client) Option {
+// WithServer provides a function to set the server option.
+func WithServer(v string) Option {
 	return func(o *Options) {
-		o.Client = v
+		o.Server = v
+	}
+}
+
+// WithDatacenter provides a function to set the datacenter option.
+func WithDatacenter(v string) Option {
+	return func(o *Options) {
+		o.Datacenter = v
 	}
 }
 
@@ -52,16 +57,9 @@ func WithMount(v *mount.Service) Option {
 	}
 }
 
-// WithResize provides a function to set the mount option.
+// WithResize provides a function to set the resize option.
 func WithResize(v *resize.Service) Option {
 	return func(o *Options) {
 		o.Resize = v
-	}
-}
-
-// WithStats provides a function to set the mount option.
-func WithStats(v *stats.Service) Option {
-	return func(o *Options) {
-		o.Stats = v
 	}
 }
