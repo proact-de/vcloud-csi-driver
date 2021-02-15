@@ -1,7 +1,7 @@
 repository:
   name: vcloud-csi-driver
-  description: A Container Storage Interface (CSI) Driver for vCloud Director
-  topics: kubernetes, storage, csi, container-orchestration, csi-plugin
+  description: A Container Storage Interface (CSI) Driver for VMWare vCloud Director
+  topics: kubernetes, storage, csi, container-orchestration, csi-plugin, vmware, vcloud
 
   private: false
   has_issues: true
