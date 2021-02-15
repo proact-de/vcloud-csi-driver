@@ -20,11 +20,12 @@ resources:
 secretGenerator:
 - name: vcloud-csi-driver
   literals:
+    - href=https://vcloud.example.com/api
+    - insecure=false
     - username=username
     - password=p455w0rd
     - org=my-org
-    - vdcs=my-vdc
-    - href=https://vcloud.example.com/api
+    - vdc=my-vdc
 
 images:
   - name: vcloud-driver

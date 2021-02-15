@@ -2,6 +2,8 @@ allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
@@ -16,10 +18,10 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
-  name: vcloud-csi-driver
+  name: vcloud-csi-ctrl
   namespace: kube-system
 ---
 apiVersion: v1
@@ -36,7 +38,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-attacher
@@ -82,7 +84,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-provisioner
@@ -180,7 +182,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-resizer
@@ -225,7 +227,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-snapshotter
@@ -313,7 +315,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-attacher
@@ -324,13 +326,12 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vcloud-csi-driver
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-provisioner
@@ -341,7 +342,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vcloud-csi-driver
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -364,7 +364,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-resizer
@@ -375,13 +375,12 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vcloud-csi-driver
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-snapshotter
@@ -392,20 +391,20 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vcloud-csi-driver
-  namespace: kube-system
 ---
 apiVersion: v1
 data:
   href: aHR0cHM6Ly92Y2xvdWQuZXhhbXBsZS5jb20vYXBp
+  insecure: ZmFsc2U=
   org: bXktb3Jn
   password: cDQ1NXcwcmQ=
   username: dXNlcm5hbWU=
-  vdcs: bXktdmRj
+  vdc: bXktdmRj
 kind: Secret
 metadata:
   labels:
     app.kubernetes.io/version: 1.0.0-alpha1
-  name: vcloud-csi-driver-99t6729dht
+  name: vcloud-csi-driver-5997chf5c9
   namespace: kube-system
 type: Opaque
 ---
@@ -415,7 +414,7 @@ metadata:
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
-  name: vcloud-csi-driver-metrics
+  name: vcloud-csi-ctrl-metrics
   namespace: kube-system
 spec:
   ports:
@@ -423,7 +422,7 @@ spec:
     port: 8080
     targetPort: metrics
   selector:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
 ---
@@ -475,39 +474,36 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: spec.nodeName
-        - name: VCLOUD_CSI_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: VCLOUD_CSI_PODIP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: VCLOUD_CSI_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_ORG
-          valueFrom:
-            secretKeyRef:
-              key: org
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_VDCS
-          valueFrom:
-            secretKeyRef:
-              key: vdcs
-              name: vcloud-csi-driver-99t6729dht
         - name: VCLOUD_CSI_HREF
           valueFrom:
             secretKeyRef:
               key: href
-              name: vcloud-csi-driver-99t6729dht
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_INSECURE
+          valueFrom:
+            secretKeyRef:
+              key: insecure
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_ORG
+          valueFrom:
+            secretKeyRef:
+              key: org
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_VDC
+          valueFrom:
+            secretKeyRef:
+              key: vdc
+              name: vcloud-csi-driver-5997chf5c9
         - name: VCLOUD_CSI_ENDOINT
           value: unix:///csi/csi.sock
         image: docker.io/proactcloud/vcloud-csi-driver:latest
@@ -520,7 +516,7 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 2
           timeoutSeconds: 3
-        name: csi-vcloud
+        name: csi-driver
         ports:
         - containerPort: 8080
           name: metrics
@@ -532,6 +528,22 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 2
           timeoutSeconds: 3
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /csi
+          name: socket
+      - args:
+        - --v=5
+        - --csi-address=/csi/csi.sock
+        - --leader-election
+        image: k8s.gcr.io/sig-storage/csi-attacher:v3.0.2
+        imagePullPolicy: Always
+        name: csi-attacher
         securityContext:
           allowPrivilegeEscalation: true
           capabilities:
@@ -564,22 +576,6 @@ spec:
         - --v=5
         - --csi-address=/csi/csi.sock
         - --leader-election
-        image: k8s.gcr.io/sig-storage/csi-attacher:v3.0.2
-        imagePullPolicy: Always
-        name: csi-attacher
-        securityContext:
-          allowPrivilegeEscalation: true
-          capabilities:
-            add:
-            - SYS_ADMIN
-          privileged: true
-        volumeMounts:
-        - mountPath: /csi
-          name: socket
-      - args:
-        - --v=5
-        - --csi-address=/csi/csi.sock
-        - --leader-election
         image: k8s.gcr.io/sig-storage/csi-resizer:v1.0.1
         imagePullPolicy: Always
         name: csi-resizer
@@ -589,16 +585,6 @@ spec:
             add:
             - SYS_ADMIN
           privileged: true
-        volumeMounts:
-        - mountPath: /csi
-          name: socket
-      - args:
-        - --v=5
-        - --csi-address=/csi/csi.sock
-        - --leader-election
-        image: k8s.gcr.io/sig-storage/csi-snapshotter:v3.0.2
-        imagePullPolicy: Always
-        name: csi-snapshotter
         volumeMounts:
         - mountPath: /csi
           name: socket
@@ -650,39 +636,36 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: spec.nodeName
-        - name: VCLOUD_CSI_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: VCLOUD_CSI_PODIP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: VCLOUD_CSI_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_ORG
-          valueFrom:
-            secretKeyRef:
-              key: org
-              name: vcloud-csi-driver-99t6729dht
-        - name: VCLOUD_CSI_VDCS
-          valueFrom:
-            secretKeyRef:
-              key: vdcs
-              name: vcloud-csi-driver-99t6729dht
         - name: VCLOUD_CSI_HREF
           valueFrom:
             secretKeyRef:
               key: href
-              name: vcloud-csi-driver-99t6729dht
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_INSECURE
+          valueFrom:
+            secretKeyRef:
+              key: insecure
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_ORG
+          valueFrom:
+            secretKeyRef:
+              key: org
+              name: vcloud-csi-driver-5997chf5c9
+        - name: VCLOUD_CSI_VDC
+          valueFrom:
+            secretKeyRef:
+              key: vdc
+              name: vcloud-csi-driver-5997chf5c9
         - name: VCLOUD_CSI_ENDOINT
           value: unix:///csi/csi.sock
         image: docker.io/proactcloud/vcloud-csi-driver:latest
@@ -695,7 +678,7 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 2
           timeoutSeconds: 3
-        name: node-vcloud
+        name: node-driver
         ports:
         - containerPort: 8080
           name: metrics

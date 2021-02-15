@@ -3,14 +3,14 @@ kind: Service
 apiVersion: v1
 
 metadata:
-  name: vcloud-csi-driver-metrics
+  name: vcloud-csi-ctrl-metrics
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
 
 spec:
   selector:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
   ports:
     - port: 8080
       name: metrics

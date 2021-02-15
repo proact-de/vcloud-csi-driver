@@ -32,7 +32,7 @@ spec:
           effect: NoExecute
 
       containers:
-        - name: csi-vcloud
+        - name: csi-driver
           image: vcloud-driver
           imagePullPolicy: Always
           securityContext:
@@ -47,14 +47,16 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: spec.nodeName
-            - name: VCLOUD_CSI_NAMESPACE
+            - name: VCLOUD_CSI_HREF
               valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: VCLOUD_CSI_PODIP
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: href
+            - name: VCLOUD_CSI_INSECURE
               valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+                secretKeyRef:
+                  name: vcloud-csi-driver
+                  key: insecure
             - name: VCLOUD_CSI_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -70,16 +72,11 @@ spec:
                 secretKeyRef:
                   name: vcloud-csi-driver
                   key: org
-            - name: VCLOUD_CSI_VDCS
+            - name: VCLOUD_CSI_VDC
               valueFrom:
                 secretKeyRef:
                   name: vcloud-csi-driver
-                  key: vdcs
-            - name: VCLOUD_CSI_HREF
-              valueFrom:
-                secretKeyRef:
-                  name: vcloud-csi-driver
-                  key: href
+                  key: vdc
             - name: VCLOUD_CSI_ENDOINT
               value: "unix:///csi/csi.sock"
           ports:

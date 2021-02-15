@@ -25,7 +25,7 @@ metadata:
   name: vcloud-csi-provisioner
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
 
 roleRef:
   kind: ClusterRole
@@ -44,7 +44,7 @@ metadata:
   name: vcloud-csi-attacher
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
 
 roleRef:
   kind: ClusterRole
@@ -63,7 +63,7 @@ metadata:
   name: vcloud-csi-resizer
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
 
 roleRef:
   kind: ClusterRole
@@ -82,7 +82,7 @@ metadata:
   name: vcloud-csi-snapshotter
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
 
 roleRef:
   kind: ClusterRole

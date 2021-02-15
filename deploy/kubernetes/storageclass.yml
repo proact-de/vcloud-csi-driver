@@ -6,8 +6,8 @@ metadata:
   name: vcloud
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-  # annotations:
-  #   storageclass.kubernetes.io/is-default-class: "true"
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
 
 provisioner: vcloud.csi.proact.de
 reclaimPolicy: Delete
