@@ -448,7 +448,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
     app.kubernetes.io/name: vcloud-csi-driver
     app.kubernetes.io/version: 1.0.0-alpha1
   name: vcloud-csi-driver
@@ -457,13 +457,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: driver
+      app.kubernetes.io/component: ctrl
       app.kubernetes.io/name: vcloud-csi-driver
       app.kubernetes.io/version: 1.0.0-alpha1
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: driver
+        app.kubernetes.io/component: ctrl
         app.kubernetes.io/name: vcloud-csi-driver
         app.kubernetes.io/version: 1.0.0-alpha1
     spec:
@@ -597,7 +597,7 @@ spec:
         - mountPath: /csi
           name: socket
       priorityClassName: system-cluster-critical
-      serviceAccountName: vcloud-csi-driver
+      serviceAccountName: vcloud-csi-ctrl
       tolerations:
       - effect: NoSchedule
         operator: Exists

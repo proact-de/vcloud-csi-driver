@@ -5,7 +5,7 @@ metadata:
   name: vcloud-csi-driver
   labels:
     app.kubernetes.io/name: vcloud-csi-driver
-    app.kubernetes.io/component: driver
+    app.kubernetes.io/component: ctrl
 
 spec:
   replicas: 1
@@ -13,16 +13,16 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: vcloud-csi-driver
-      app.kubernetes.io/component: driver
+      app.kubernetes.io/component: ctrl
 
   template:
     metadata:
       labels:
         app.kubernetes.io/name: vcloud-csi-driver
-        app.kubernetes.io/component: driver
+        app.kubernetes.io/component: ctrl
 
     spec:
-      serviceAccountName: vcloud-csi-driver
+      serviceAccountName: vcloud-csi-ctrl
       priorityClassName: system-cluster-critical
 
       tolerations:
