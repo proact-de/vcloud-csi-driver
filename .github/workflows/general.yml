@@ -72,6 +72,9 @@ jobs:
         with:
           path: bin/
 
+      - name: Check directory
+        run: ls -aliR
+
       - name: Image metadata
         id: meta
         uses: crazy-max/ghaction-docker-meta@v1
