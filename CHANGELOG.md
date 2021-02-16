@@ -16,4 +16,3 @@ The following sections list the changes for unreleased.
    https://github.com/proact-de/vcloud-csi-driver/issues/1
 
 
-
