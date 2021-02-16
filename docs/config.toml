@@ -1,0 +1,16 @@
+baseURL = "https://proact-de.github.io/vcloud-csi-driver/"
+languageCode = "en-us"
+title = "CSI Driver for VMWare vCloud Director"
+pygmentsUseClasses = true
+
+[blackfriday]
+  angledQuotes = true
+  fractions = false
+  plainIDAnchors = true
+  smartlists = true
+  extensions = ["hardLineBreak"]
+
+[params]
+  author = "Proact Deutschland GmbH"
+  description = "A Container Storage Interface (CSI) Driver for VMWare vCloud Director"
+  keywords = "container, storage, interface, csi, kubernetes, vmware, vcloud, director"

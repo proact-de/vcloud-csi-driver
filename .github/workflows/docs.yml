@@ -1,0 +1,32 @@
+name: changelog
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - docs/
+
+jobs:
+  changes:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout source
+        id: source
+        uses: actions/checkout@v2
+
+      - name: Setup hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.80.0'
+
+      - name: Build pages
+        id: build
+        uses: make docs
+
+      - name: Deploy pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/public/
