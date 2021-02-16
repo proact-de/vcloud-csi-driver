@@ -4,16 +4,10 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - docs/
-      - changelog/
 
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - docs/
-      - changelog/
 
 jobs:
   tests:
