@@ -92,3 +92,8 @@ func (s *Service) DeleteVolume(ctx context.Context, req *csi.DeleteVolumeRequest
 
 	return &csi.DeleteVolumeResponse{}, nil
 }
+
+// GetCapacity implements the CSI standard definition.
+func (s *Service) GetCapacity(ctx context.Context, req *csi.GetCapacityRequest) (*csi.GetCapacityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "not implemented")
+}

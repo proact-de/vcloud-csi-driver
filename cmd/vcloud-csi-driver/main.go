@@ -65,25 +65,11 @@ func main() {
 				Destination: &cfg.Logs.Color,
 			},
 			&cli.StringFlag{
-				Name:        "kube-nodename",
+				Name:        "node-name",
 				Value:       "",
 				Usage:       "Name of the node running on",
 				EnvVars:     []string{"VCLOUD_CSI_NODENAME"},
-				Destination: &cfg.Kubernetes.Nodename,
-			},
-			&cli.StringFlag{
-				Name:        "kube-namespace",
-				Value:       "",
-				Usage:       "Namespace running on Kubernetes",
-				EnvVars:     []string{"VCLOUD_CSI_NAMESPACE"},
-				Destination: &cfg.Kubernetes.Namespace,
-			},
-			&cli.StringFlag{
-				Name:        "kube-podip",
-				Value:       "",
-				Usage:       "IP address of the running pod",
-				EnvVars:     []string{"VCLOUD_CSI_PODIP"},
-				Destination: &cfg.Kubernetes.PodIP,
+				Destination: &cfg.Driver.Nodename,
 			},
 			&cli.StringFlag{
 				Name:        "vcloud-href",
@@ -188,32 +174,18 @@ func main() {
 				return errors.New("failed to init vcloud director client")
 			}
 
-			disks, err := client.List()
-
-			if err != nil {
-				log.Error().
-					Err(err).
-					Msg("")
-			}
-
-			log.Info().
-				Interface("disks", disks).
-				Msg("")
-
-			os.Exit(1)
-
 			volumeService := volume.NewService(
 				volume.WithClient(client),
 			)
 
 			ctrlService := controller.NewService(
-				controller.WithServer(cfg.Kubernetes.Nodename),
+				controller.WithServer(cfg.Driver.Nodename),
 				controller.WithDatacenter(cfg.Driver.Datacenter),
 				controller.WithVolume(volumeService),
 			)
 
 			nodeService := node.NewService(
-				node.WithServer(cfg.Kubernetes.Nodename),
+				node.WithServer(cfg.Driver.Nodename),
 				node.WithDatacenter(cfg.Driver.Datacenter),
 				node.WithVolume(volumeService),
 				node.WithMount(mount.NewService()),

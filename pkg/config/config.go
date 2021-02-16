@@ -9,6 +9,7 @@ type Logs struct {
 
 // Driver defines the driver configuration.
 type Driver struct {
+	Nodename     string
 	Href         string
 	Insecure     bool
 	Username     string
@@ -18,18 +19,10 @@ type Driver struct {
 	Endpoint     string
 }
 
-// Kubernetes defines the kubernetes configuration.
-type Kubernetes struct {
-	Nodename  string
-	Namespace string
-	PodIP     string
-}
-
 // Config is a combination of all available configurations.
 type Config struct {
-	Logs       Logs
-	Driver     Driver
-	Kubernetes Kubernetes
+	Logs   Logs
+	Driver Driver
 }
 
 // Load initializes a default configuration struct.

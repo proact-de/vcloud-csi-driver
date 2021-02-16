@@ -8,6 +8,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// ListVolumes implements the CSI standard definition.
+func (s *Service) ListVolumes(ctx context.Context, req *csi.ListVolumesRequest) (*csi.ListVolumesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "not implemented")
+}
+
 // ControllerGetVolume implements the CSI standard definition.
 func (s *Service) ControllerGetVolume(ctx context.Context, req *csi.ControllerGetVolumeRequest) (*csi.ControllerGetVolumeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemented")

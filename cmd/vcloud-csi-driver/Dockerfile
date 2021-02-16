@@ -2,10 +2,11 @@ FROM alpine:3
 
 RUN apk add --no-cache \
     e2fsprogs \
-    findmnt \
-    xfsprogs \
-    blkid \
     e2fsprogs-extra \
+    xfsprogs \
+    xfsprogs-extra \
+    blkid \
+    findmnt \
     mailcap \
     ca-certificates
 

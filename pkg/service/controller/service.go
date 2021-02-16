@@ -41,35 +41,6 @@ func NewService(opts ...Option) *Service {
 	}
 }
 
-// ListVolumes implements the CSI standard definition.
-func (s *Service) ListVolumes(ctx context.Context, req *csi.ListVolumesRequest) (*csi.ListVolumesResponse, error) {
-	resp := &csi.ListVolumesResponse{}
-	volumes, err := s.volume.List(ctx)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for _, volume := range volumes {
-		resp.Entries = append(
-			resp.Entries,
-			&csi.ListVolumesResponse_Entry{
-				Volume: &csi.Volume{
-					VolumeId:      volume.Name,
-					CapacityBytes: volume.Size,
-				},
-			},
-		)
-	}
-
-	return resp, nil
-}
-
-// GetCapacity implements the CSI standard definition.
-func (s *Service) GetCapacity(ctx context.Context, req *csi.GetCapacityRequest) (*csi.GetCapacityResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "not implemented")
-}
-
 // ValidateVolumeCapabilities implements the CSI standard definition.
 func (s *Service) ValidateVolumeCapabilities(ctx context.Context, req *csi.ValidateVolumeCapabilitiesRequest) (*csi.ValidateVolumeCapabilitiesResponse, error) {
 	if req.VolumeId == "" {
@@ -114,35 +85,7 @@ func (s *Service) ControllerGetCapabilities(ctx context.Context, req *csi.Contro
 			{
 				Type: &csi.ControllerServiceCapability_Rpc{
 					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_LIST_VOLUMES,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_GET_CAPACITY,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
 						Type: csi.ControllerServiceCapability_RPC_EXPAND_VOLUME,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_VOLUME_CONDITION,
-					},
-				},
-			},
-			{
-				Type: &csi.ControllerServiceCapability_Rpc{
-					Rpc: &csi.ControllerServiceCapability_RPC{
-						Type: csi.ControllerServiceCapability_RPC_GET_VOLUME,
 					},
 				},
 			},

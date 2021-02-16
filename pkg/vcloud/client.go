@@ -5,7 +5,6 @@ import (
 
 	"github.com/proact-de/vcloud-csi-driver/pkg/model"
 	"github.com/rs/zerolog/log"
-	"github.com/vmware/go-vcloud-director/types/v56"
 	"github.com/vmware/go-vcloud-director/v2/govcd"
 )
 
@@ -99,57 +98,6 @@ func (c *Client) Refresh() error {
 	}
 
 	return nil
-}
-
-// List fetches all available disks.
-func (c *Client) List() ([]*model.Volume, error) {
-	log.Info().
-		Msg("Listing volumes")
-
-	if err := c.Refresh(); err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to refresh authentication")
-
-		return nil, err
-	}
-
-	if err := c.vdc.Refresh(); err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to refresh datacenter")
-
-		return nil, err
-	}
-
-	resp := make([]*model.Volume, 0)
-
-	for _, entity := range c.vdc.Vdc.ResourceEntities {
-		for _, resource := range entity.ResourceEntity {
-			if resource.Type == types.MimeDisk {
-				disk, err := c.vdc.GetDiskByHref(resource.HREF)
-
-				if err != nil {
-					return nil, err
-				}
-
-				log.Info().
-					Interface("disk", disk).
-					Msg("")
-
-				resp = append(resp, &model.Volume{
-					ID:      resource.ID,
-					Name:    resource.Name,
-					Size:    disk.Disk.Size,
-					Profile: disk.Disk.StorageProfile.Name,
-					BusType: disk.Disk.BusType,
-					SubType: disk.Disk.BusSubType,
-				})
-			}
-		}
-	}
-
-	return resp, nil
 }
 
 // Find searches a disk by it's ID.

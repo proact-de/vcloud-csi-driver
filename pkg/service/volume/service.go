@@ -47,21 +47,6 @@ func NewService(opts ...Option) *Service {
 	}
 }
 
-// List simply tries to list available volumes.
-func (s *Service) List(ctx context.Context) ([]*model.Volume, error) {
-	// disk, err := s.client.List()
-
-	// if err != nil {
-	// 	if errors.Is(err, govcd.ErrorEntityNotFound) {
-	// 		return nil, ErrVolumeNotFound
-	// 	}
-	// }
-
-	// return disk, nil
-
-	return s.client.List()
-}
-
 // FindOpts defines the available options for the find handler.
 type FindOpts struct {
 	ID string
