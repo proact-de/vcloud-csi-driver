@@ -1,12 +1,16 @@
 {
     "extends": [
         "config:base",
-        "docker:pinDigests",
         ":automergeMinor",
-        ":automergeDigest"
+        ":automergeDigest",
+        "docker:enableMajor",
+        "docker:pinDigests"
     ],
     "enabledManagers": [
-        "gomod"
+        "github-actions",
+        "gomod",
+        "dockerfile",
+        "kustomize"
     ],
     "gomod": {
         "postUpdateOptions": [
