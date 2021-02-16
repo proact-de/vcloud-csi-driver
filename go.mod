@@ -4,23 +4,18 @@ go 1.15
 
 require (
 	github.com/container-storage-interface/spec v1.3.0
-	github.com/f41gh7/vcd-csi v0.0.2
-	github.com/go-kit/kit v0.10.0
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-	github.com/hetznercloud/csi-driver v1.5.1
 	github.com/oklog/run v1.0.0
 	github.com/prometheus/client_golang v1.9.0
 	github.com/rs/zerolog v1.20.0
 	github.com/urfave/cli/v2 v2.3.0
-	github.com/vmware/go-vcloud-director v2.0.0+incompatible
 	github.com/vmware/go-vcloud-director/v2 v2.10.0
-	golang.org/x/sys v0.0.0-20201214210602-f9fddec55a1e
 	google.golang.org/grpc v1.33.0
 	k8s.io/kubernetes v1.20.2
 	k8s.io/mount-utils v0.0.0
-	k8s.io/utils v0.0.0-20201110183641-67b214c5f920
+	k8s.io/utils v0.0.0-20210111153108-fddb29f9d009
 )
 
 replace (
