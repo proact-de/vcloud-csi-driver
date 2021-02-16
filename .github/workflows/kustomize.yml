@@ -1,0 +1,36 @@
+name: changelog
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - deploy/
+
+jobs:
+  changes:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout source
+        id: source
+        uses: actions/checkout@v2
+
+      - name: Run kustomize
+        id: kustomize
+        uses: karancode/kustomize-github-action@v1.2.0
+        with:
+          kustomize_version: 4.0.1
+          kustomize_build_dir: deploy/kubernetes/
+          kustomize_output_file: deploy/kubernetes/bundle.yml
+
+      - name: Commit changes
+        id: commit
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: GitHub Actions
+          author_email: github@proactcloud.de
+          add: deploy/
+          message: Automated kustomize update
+          push: true
+          signoff: true
