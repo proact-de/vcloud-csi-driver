@@ -16,7 +16,7 @@ jobs:
         id: source
         uses: actions/checkout@v2
 
-      - name: Setup Golang
+      - name: Setup golang
         id: golang
         uses: actions/setup-go@v2
         with:

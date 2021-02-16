@@ -6,7 +6,7 @@ on:
       - v*
 
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-20.04
 
     steps:
@@ -14,35 +14,19 @@ jobs:
         id: source
         uses: actions/checkout@v2
 
-      - name: Setup Golang
+      - name: Setup golang
         id: golang
         uses: actions/setup-go@v2
         with:
           go-version: 1.15
 
-      - name: Build binary
+      - name: Run generate
+        id: generate
+        run: make generate
+
+      - name: Run build
         id: build
         run: make build
-
-      - name: Upload binary
-        id: upload
-        uses: actions/upload-artifact@v2
-        with:
-          path: bin/
-
-  docker:
-    runs-on: ubuntu-20.04
-    needs: build
-
-    steps:
-      - name: Checkout source
-        id: source
-        uses: actions/checkout@v2
-
-      - name: Download binary
-        uses: actions/download-artifact@v2
-        with:
-          path: bin/
 
       - name: Image metadata
         id: meta
