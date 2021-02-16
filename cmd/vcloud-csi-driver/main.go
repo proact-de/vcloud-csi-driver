@@ -46,21 +46,21 @@ func main() {
 			&cli.StringFlag{
 				Name:        "log-level",
 				Value:       "info",
-				Usage:       "set logging level",
+				Usage:       "Set logging level",
 				EnvVars:     []string{"VCLOUD_CSI_LOG_LEVEL"},
 				Destination: &cfg.Logs.Level,
 			},
 			&cli.BoolFlag{
 				Name:        "log-pretty",
 				Value:       true,
-				Usage:       "enable pretty logging",
+				Usage:       "Enable pretty logging",
 				EnvVars:     []string{"VCLOUD_CSI_LOG_PRETTY"},
 				Destination: &cfg.Logs.Pretty,
 			},
 			&cli.BoolFlag{
 				Name:        "log-color",
 				Value:       true,
-				Usage:       "enable colored logging",
+				Usage:       "Enable colored logging",
 				EnvVars:     []string{"VCLOUD_CSI_LOG_COLOR"},
 				Destination: &cfg.Logs.Color,
 			},
@@ -109,7 +109,7 @@ func main() {
 			&cli.StringFlag{
 				Name:        "vcloud-vdc",
 				Value:       "",
-				Usage:       "VDCs for vCloud Director",
+				Usage:       "VDC for vCloud Director",
 				EnvVars:     []string{"VCLOUD_CSI_VDC"},
 				Destination: &cfg.Driver.Datacenter,
 			},
