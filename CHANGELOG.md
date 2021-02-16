@@ -14,5 +14,3 @@ The following sections list the changes for unreleased.
    provision volumes based on independant disks on vCloud Director.
 
    https://github.com/proact-de/vcloud-csi-driver/issues/1
-
-
