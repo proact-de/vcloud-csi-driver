@@ -1,5 +1,6 @@
 repository:
   name: vcloud-csi-driver
+  homepage: https://proact-de.github.io/vcloud-csi-driver/
   description: A Container Storage Interface (CSI) Driver for VMWare vCloud Director
   topics: kubernetes, storage, csi, container-orchestration, csi-plugin, vmware, vcloud
 
