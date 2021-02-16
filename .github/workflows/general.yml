@@ -80,8 +80,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: proactcloud/vcloud-csi-driver
-          tag-sha: true
-          tag-latest: flase
+          tag-latest: false
           tag-custom: master
           label-custom: |
             maintainer=Proact Deutschland GmbH <devops@proactcloud.de>

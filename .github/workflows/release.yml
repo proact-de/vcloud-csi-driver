@@ -33,7 +33,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: proactcloud/vcloud-csi-driver
-          tag-sha: true
+          tag-latest: true
           tag-semver: |
             {{ version }}
             {{ major }}.{{ minor }}
