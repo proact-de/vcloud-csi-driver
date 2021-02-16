@@ -108,3 +108,14 @@ type DetachOpts struct {
 func (s *Service) Detach(ctx context.Context, opts DetachOpts) error {
 	return nil
 }
+
+// ResizeOpts defines the available options for the resize handler.
+type ResizeOpts struct {
+	Volume *model.Volume
+	Size   int64
+}
+
+// Resize is handling the resizing of a volume from a server.
+func (s *Service) Resize(ctx context.Context, opts ResizeOpts) error {
+	return nil
+}

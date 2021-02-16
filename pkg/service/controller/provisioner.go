@@ -87,7 +87,10 @@ func (s *Service) DeleteVolume(ctx context.Context, req *csi.DeleteVolumeRequest
 			code = codes.FailedPrecondition
 		}
 
-		return nil, status.Error(code, fmt.Sprintf("failed to delete volume: %s", err))
+		return nil, status.Error(code, fmt.Sprintf(
+			"failed to delete volume: %s",
+			err,
+		))
 	}
 
 	return &csi.DeleteVolumeResponse{}, nil
