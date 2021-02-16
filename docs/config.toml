@@ -3,6 +3,9 @@ languageCode = "en-us"
 title = "CSI Driver for vCloud Director"
 pygmentsUseClasses = true
 
+[markup.goldmark.renderer]
+  unsafe = true
+
 [blackfriday]
   angledQuotes = true
   fractions = false
