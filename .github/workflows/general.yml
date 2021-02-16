@@ -56,8 +56,8 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v2
         with:
-          name: vcloud-csi-driver
-          path: bin/vcloud-csi-driver
+          name: binary
+          path: bin/
 
   docker:
     runs-on: ubuntu-20.04
@@ -72,11 +72,14 @@ jobs:
         id: download
         uses: actions/download-artifact@v2
         with:
-          name: vcloud-csi-driver
-          path: bin/vcloud-csi-driver
+          name: binary
+
+      - name: Copy binary
+        id: copy
+        run: cp -rf ${{steps.download.outputs.download-path}} bin
 
       - name: Check directory
-        run: ls -aliR
+        run: ls -aliR bin
 
       - name: Image metadata
         id: meta
