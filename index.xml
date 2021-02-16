@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CSI Driver for vCloud Director</title>
+    <link>https://proact-de.github.io/vcloud-csi-driver/</link>
+    <description>Recent content on CSI Driver for vCloud Director</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://proact-de.github.io/vcloud-csi-driver/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting Started</title>
+      <link>https://proact-de.github.io/vcloud-csi-driver/getting-started/</link>
+      <pubDate>Tue, 16 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://proact-de.github.io/vcloud-csi-driver/getting-started/</guid>
+      <description>Installation TBD
+Configuration  VCLOUD_CSI_LOG_LEVEL Set logging level, defaults to info VCLOUD_CSI_LOG_PRETTY Enable pretty logging, defaults to true VCLOUD_CSI_LOG_COLOR Enable colored logging, defaults to true VCLOUD_CSI_NODENAME Name of the node running on, this is a required parameter VCLOUD_CSI_HREF URL to access vCloud Director API, this is a required parameter VCLOUD_CSI_INSECURE Skip SSL verify for vCloud Director, defaults to false VCLOUD_CSI_USERNAME Username for vCloud Director, this is a required parameter VCLOUD_CSI_PASSWORD Password for vCloud Director, this is a required parameter VCLOUD_CSI_ORG Organization for vCloud Director, this is a required parameter VCLOUD_CSI_VDC VDCs for vCloud Director, this is a required parameter VCLOUD_CSI_ENDOINT Path to unix socket endpoint, defaults to unix:///csi/csi.</description>
+    </item>
+    
+    <item>
+      <title>Building</title>
+      <link>https://proact-de.github.io/vcloud-csi-driver/building/</link>
+      <pubDate>Tue, 16 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://proact-de.github.io/vcloud-csi-driver/building/</guid>
+      <description>As this project is built with Go you need to install Go first. The installation of Go is out of the scope of this document, please follow the official documentation. After the installation of Go you need to get the sources:
+git clone https://github.com/proact-de/vcloud-csi-driver.git cd vcloud-csi-driver/ All required tool besides Go itself are bundled by Go modules, all you need is part of the Makfile:
+make generate build Finally you should have the binary within the bin/ folder now, give it a try with .</description>
+    </item>
+    
+    <item>
+      <title>License</title>
+      <link>https://proact-de.github.io/vcloud-csi-driver/license/</link>
+      <pubDate>Tue, 16 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://proact-de.github.io/vcloud-csi-driver/license/</guid>
+      <description>This project is licensed under the Apache 2.0 license. For the license of the used libraries you have to check the respective sources.</description>
+    </item>
+    
+  </channel>
+</rss>
