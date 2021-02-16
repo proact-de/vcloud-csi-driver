@@ -1,6 +1,6 @@
 baseURL = "https://proact-de.github.io/vcloud-csi-driver/"
 languageCode = "en-us"
-title = "CSI Driver for VMWare vCloud Director"
+title = "CSI Driver for vCloud Director"
 pygmentsUseClasses = true
 
 [blackfriday]
