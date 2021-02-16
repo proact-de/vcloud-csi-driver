@@ -1,0 +1,128 @@
+name: general
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout source
+        id: source
+        uses: actions/checkout@v2
+
+      - name: Setup Golang
+        id: golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Run generate
+        id: build
+        run: make generate
+
+      - name: Run fmt
+        id: build
+        run: make fmt
+
+      - name: Run vet
+        id: build
+        run: make vet
+
+      - name: Run staticcheck
+        id: build
+        run: make staticcheck
+
+      - name: Run lint
+        id: build
+        run: make lint
+
+      - name: Run test
+        id: build
+        run: make test
+
+      - name: Run build
+        id: build
+        run: make build
+
+      - name: Upload binary
+        id: upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: general
+          path: bin/vcloud-csi-driver
+
+  docker:
+    runs-on: ubuntu-20.04
+    needs: tests
+
+    steps:
+      - name: Checkout source
+        id: source
+        uses: actions/checkout@v2
+
+      - name: Download binary
+        uses: actions/download-artifact@v2
+        with:
+          name: general
+
+      - name: Image metadata
+        id: meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: proactcloud/vcloud-csi-driver
+          tag-sha: true
+          tag-latest: flase
+          tag-custom: master
+          label-custom: |
+            maintainer=Proact Deutschland GmbH <devops@proactcloud.de>
+            org.opencontainers.image.title=vcloud-csi-driver
+            org.opencontainers.image.description=A Container Storage Interface (CSI) Driver for VMWare vCloud Director
+            org.opencontainers.image.vendor=Proact Deutschland GmbH
+
+      - name: Setup qemu
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Docker login
+        id: login
+        uses: docker/login-action@v1
+        if: github.event_name != 'pull_request'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build image
+        id: publish
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          file: cmd/vcloud-csi-driver/Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Upload readme
+        id: readme
+        uses: christian-korneck/update-container-description-action@v1
+        if: github.event_name != 'pull_request'
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
+        with:
+          destination_container_repo: proactcloud/vcloud-csi-driver
+          provider: dockerhub
+          short_description: Docker images for VMWare vCloud Director CSI driver
+          readme_file: README.md
