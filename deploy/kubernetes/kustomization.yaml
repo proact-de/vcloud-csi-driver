@@ -40,7 +40,7 @@ images:
     newTag: "v3.1.0"
   - name: csi-resizer
     newName: k8s.gcr.io/sig-storage/csi-resizer
-    newTag: "v1.0.1"
+    newTag: "v1.1.0"
   - name: csi-snapshotter
     newName: k8s.gcr.io/sig-storage/csi-snapshotter
     newTag: "v3.0.2"
