@@ -25,27 +25,27 @@ jobs:
           go-version: 1.15
 
       - name: Run generate
-        id: build
+        id: generate
         run: make generate
 
       - name: Run fmt
-        id: build
+        id: fmt
         run: make fmt
 
       - name: Run vet
-        id: build
+        id: vet
         run: make vet
 
       - name: Run staticcheck
-        id: build
+        id: staticcheck
         run: make staticcheck
 
       - name: Run lint
-        id: build
+        id: lint
         run: make lint
 
       - name: Run test
-        id: build
+        id: test
         run: make test
 
       - name: Run build
