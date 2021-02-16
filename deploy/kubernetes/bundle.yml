@@ -541,7 +541,7 @@ spec:
         - --v=5
         - --csi-address=/csi/csi.sock
         - --leader-election
-        image: k8s.gcr.io/sig-storage/csi-attacher:v3.0.2
+        image: k8s.gcr.io/sig-storage/csi-attacher:v3.1.0
         imagePullPolicy: Always
         name: csi-attacher
         securityContext:
@@ -560,7 +560,7 @@ spec:
         - --default-fstype=ext4
         - --feature-gates=Topology=true
         - --strict-topology
-        image: k8s.gcr.io/sig-storage/csi-provisioner:v2.0.4
+        image: k8s.gcr.io/sig-storage/csi-provisioner:v2.1.0
         imagePullPolicy: Always
         name: csi-provisioner
         securityContext:
@@ -713,7 +713,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+        image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.1.0
         imagePullPolicy: Always
         name: node-registrar
         securityContext:
