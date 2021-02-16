@@ -35,8 +35,8 @@ jobs:
           images: proactcloud/vcloud-csi-driver
           tag-sha: true
           tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
+            {{ version }}
+            {{ major }}.{{ minor }}
           label-custom: |
             maintainer=Proact Deutschland GmbH <devops@proactcloud.de>
             org.opencontainers.image.title=vcloud-csi-driver
@@ -62,7 +62,7 @@ jobs:
         id: publish
         uses: docker/build-push-action@v2
         with:
-          builder: ${{ steps.buildx.outputs.name }}
+          context: .
           file: cmd/vcloud-csi-driver/Dockerfile
           platforms: linux/amd64
           push: true
