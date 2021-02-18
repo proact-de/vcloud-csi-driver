@@ -13,7 +13,7 @@ require (
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vmware/go-vcloud-director/v2 v2.10.0
 	google.golang.org/grpc v1.35.0
-	k8s.io/kubernetes v1.20.3
+	k8s.io/kubernetes v1.20.4
 	k8s.io/mount-utils v0.20.3
 	k8s.io/utils v0.0.0-20210111153108-fddb29f9d009
 )
