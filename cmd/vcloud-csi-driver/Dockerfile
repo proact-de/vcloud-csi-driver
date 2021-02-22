@@ -1,4 +1,4 @@
-FROM alpine:3@sha256:a75afd8b57e7f34e4dad8d65e2c7ba2e1975c795ce1ee22fa34f8cf46f96a3be
+FROM alpine:20210212@sha256:78b6d0a9e7a5b3d2aa1c10932f08272d360a9b35e80b3cc5fb04b30e04fecf4b
 
 RUN apk add --no-cache \
     e2fsprogs \
