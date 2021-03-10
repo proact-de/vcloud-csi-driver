@@ -630,8 +630,8 @@ github.com/vektah/gqlparser v1.1.2/go.mod h1:1ycwN7Ij5njmMkPPAOaRFY4rET2Enx7IkVv
 github.com/vishvananda/netlink v1.1.0/go.mod h1:cTgwzPIzzgDAYoQrMm0EdrjRUBkTqKYppBueQtXaqoE=
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df/go.mod h1:JP3t17pCcGlemwknint6hfoeCVQrEMVwxRLRjXpq+BU=
 github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae/go.mod h1:DD4vA1DwXk04H54A1oHXtwZmA0grkVMdPxx/VGLCah0=
-github.com/vmware/go-vcloud-director/v2 v2.10.0 h1:u/MWs+RgM9bjPPTGp0u3JtWVuj1IgApsyUxbf6I2rjw=
-github.com/vmware/go-vcloud-director/v2 v2.10.0/go.mod h1:czvTQZlB4/WsOsL7rMVCb+SYAPJhx/dYoS/Sk7rc/O0=
+github.com/vmware/go-vcloud-director/v2 v2.11.0 h1:Ichr+OZfz6F0wb93npHP4mdvnDzTbpdEFpt0yTVAbVU=
+github.com/vmware/go-vcloud-director/v2 v2.11.0/go.mod h1:czvTQZlB4/WsOsL7rMVCb+SYAPJhx/dYoS/Sk7rc/O0=
 github.com/vmware/govmomi v0.20.3/go.mod h1:URlwyTFZX72RmxtxuaFL2Uj3fD1JTvZdx59bHWk6aFU=
 github.com/willf/bitset v1.1.11-0.20200630133818-d5bec3311243/go.mod h1:RjeCKbqT1RxIR/KWY6phxZiaY1IyutSBfGjNPySAYV4=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
