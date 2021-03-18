@@ -8,7 +8,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/oklog/run v1.1.0
-	github.com/prometheus/client_golang v1.9.0
+	github.com/prometheus/client_golang v1.10.0
 	github.com/rs/zerolog v1.20.0
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vmware/go-vcloud-director/v2 v2.11.0
