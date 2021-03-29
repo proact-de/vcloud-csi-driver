@@ -30,7 +30,7 @@ jobs:
 
       - name: Image metadata
         id: meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: crazy-max/ghaction-docker-meta@v2
         with:
           images: proactcloud/vcloud-csi-driver
           tag-latest: true
