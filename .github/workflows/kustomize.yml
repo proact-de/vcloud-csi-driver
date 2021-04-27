@@ -18,7 +18,7 @@ jobs:
 
       - name: Run kustomize
         id: kustomize
-        uses: karancode/kustomize-github-action@v1.2.1
+        uses: karancode/kustomize-github-action@v1.2.2
         with:
           kustomize_version: 4.0.1
           kustomize_build_dir: deploy/kubernetes/
