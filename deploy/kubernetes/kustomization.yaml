@@ -43,7 +43,7 @@ images:
     newTag: "v1.2.0"
   - name: csi-snapshotter
     newName: k8s.gcr.io/sig-storage/csi-snapshotter
-    newTag: "v4.0.0"
+    newTag: "v4.1.0"
 
   - name: node-registrar
     newName: k8s.gcr.io/sig-storage/csi-node-driver-registrar
