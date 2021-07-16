@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Checkout source
         id: source
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2
 
       - name: Setup hugo
         id: hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@c03b5dbed22245418539b65eb9a3b1d5fdd9a0a6 # renovate: tag=v2
         with:
           hugo-version: '0.80.0'
 
@@ -28,7 +28,7 @@ jobs:
 
       - name: Deploy pages
         id: publish
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305 # renovate: tag=v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_dir: docs/public/

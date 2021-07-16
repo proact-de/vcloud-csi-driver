@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Checkout source
         id: source
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2
 
       - name: Setup golang
         id: golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@37335c7bb261b353407cff977110895fa0b4f7d8 # renovate: tag=v2
         with:
           go-version: 1.15
 
@@ -28,7 +28,7 @@ jobs:
 
       - name: Commit changes
         id: commit
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@2bdc0a61a03738a1d1bda24d566ad0dbe3083d87 # renovate: tag=v7
         with:
           author_name: GitHub Actions
           author_email: github@proactcloud.de
