@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Checkout source
         id: source
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2
 
       - name: Run kustomize
         id: kustomize
-        uses: karancode/kustomize-github-action@v1.2.2
+        uses: karancode/kustomize-github-action@902f7f5048dfbd46ca1aeb06aeaf3ac2fd381143 # renovate: tag=v1.2.2
         with:
           kustomize_version: 4.0.1
           kustomize_build_dir: deploy/kubernetes/
@@ -26,7 +26,7 @@ jobs:
 
       - name: Commit changes
         id: commit
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@2bdc0a61a03738a1d1bda24d566ad0dbe3083d87 # renovate: tag=v7
         with:
           author_name: GitHub Actions
           author_email: github@proactcloud.de
