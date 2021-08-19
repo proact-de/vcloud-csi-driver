@@ -14,7 +14,7 @@ require (
 	github.com/vmware/go-vcloud-director/v2 v2.11.0
 	google.golang.org/grpc v1.40.0
 	k8s.io/kubernetes v1.20.5
-	k8s.io/mount-utils v0.22.0
+	k8s.io/mount-utils v0.22.1
 	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a
 )
 
