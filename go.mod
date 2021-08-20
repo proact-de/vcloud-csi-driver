@@ -15,7 +15,7 @@ require (
 	google.golang.org/grpc v1.40.0
 	k8s.io/kubernetes v1.20.5
 	k8s.io/mount-utils v0.22.1
-	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a
+	k8s.io/utils v0.0.0-20210820185131-d34e5cb4466e
 )
 
 replace (
