@@ -16,7 +16,7 @@ jobs:
 
       - name: Setup golang
         id: golang
-        uses: actions/setup-go@37335c7bb261b353407cff977110895fa0b4f7d8 # renovate: tag=v2
+        uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57 # renovate: tag=v2
         with:
           go-version: 1.15
 
