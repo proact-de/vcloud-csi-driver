@@ -12,7 +12,7 @@ require (
 	github.com/rs/zerolog v1.26.0
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vmware/go-vcloud-director/v2 v2.11.0
-	google.golang.org/grpc v1.43.0
+	google.golang.org/grpc v1.47.0
 	k8s.io/kubernetes v1.20.5
 	k8s.io/mount-utils v0.23.0
 	k8s.io/utils v0.0.0-20211208161948-7d6a63dca704
