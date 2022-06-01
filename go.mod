@@ -10,7 +10,7 @@ require (
 	github.com/oklog/run v1.1.0
 	github.com/prometheus/client_golang v1.10.0
 	github.com/rs/zerolog v1.26.1
-	github.com/urfave/cli/v2 v2.3.0
+	github.com/urfave/cli/v2 v2.8.1
 	github.com/vmware/go-vcloud-director/v2 v2.11.0
 	google.golang.org/grpc v1.47.0
 	k8s.io/kubernetes v1.20.5
