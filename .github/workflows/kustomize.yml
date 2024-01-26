@@ -26,7 +26,7 @@ jobs:
 
       - name: Commit changes
         id: commit
-        uses: EndBug/add-and-commit@8c12ff729a98cfbcd3fe38b49f55eceb98a5ec02 # renovate: tag=v7
+        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9
         with:
           author_name: GitHub Actions
           author_email: github@proactcloud.de
