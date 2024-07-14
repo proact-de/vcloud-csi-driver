@@ -34,21 +34,21 @@ images:
 
   - name: csi-provisioner
     newName: k8s.gcr.io/sig-storage/csi-provisioner
-    newTag: "v2.2.2"
+    newTag: "v2.2.2@sha256:04c55b93a032ad8075cae540d60fc740a72c31006590dbdb61ad4ab9813959d0"
   - name: csi-attacher
     newName: k8s.gcr.io/sig-storage/csi-attacher
-    newTag: "v3.5.0"
+    newTag: "v3.5.0@sha256:dd245051317e957423bc3e2aecddf56c745bd6714920f0dc108e505f5afb3472"
   - name: csi-resizer
     newName: k8s.gcr.io/sig-storage/csi-resizer
-    newTag: "v1.4.0"
+    newTag: "v1.4.0@sha256:9ebbf9f023e7b41ccee3d52afe39a89e3ddacdbb69269d583abfc25847cfd9e4"
   - name: csi-snapshotter
     newName: k8s.gcr.io/sig-storage/csi-snapshotter
-    newTag: "v4.2.1"
+    newTag: "v4.2.1@sha256:818f35653f2e214db81d655063e81995de9073328a3430498624c140881026a3"
 
   - name: node-registrar
     newName: k8s.gcr.io/sig-storage/csi-node-driver-registrar
-    newTag: "v2.5.1"
+    newTag: "v2.5.1@sha256:0103eee7c35e3e0b5cd8cdca9850dc71c793cdeb6669d8be7a89440da2d06ae4"
 
   - name: liveness-probe
     newName: k8s.gcr.io/sig-storage/livenessprobe
-    newTag: "v2.7.0"
+    newTag: "v2.7.0@sha256:933940f13b3ea0abc62e656c1aa5c5b47c04b15d71250413a6b821bd0c58b94e"
