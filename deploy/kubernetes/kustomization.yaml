@@ -39,7 +39,7 @@ images:
     newName: k8s.gcr.io/sig-storage/csi-attacher
     newTag: "v3.5.0"
   - name: csi-resizer
-    newName: k8s.gcr.io/sig-storage/csi-resizer
+    newName: registry.k8s.io/sig-storage/csi-resizer
     newTag: "v1.4.0"
   - name: csi-snapshotter
     newName: k8s.gcr.io/sig-storage/csi-snapshotter
