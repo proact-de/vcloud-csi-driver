@@ -4,15 +4,15 @@ go 1.15
 
 require (
 	github.com/container-storage-interface/spec v1.6.0
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.5.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/oklog/run v1.1.0
-	github.com/prometheus/client_golang v1.10.0
+	github.com/prometheus/client_golang v1.20.5
 	github.com/rs/zerolog v1.26.1
 	github.com/urfave/cli/v2 v2.8.1
 	github.com/vmware/go-vcloud-director/v2 v2.11.0
-	google.golang.org/grpc v1.47.0
+	google.golang.org/grpc v1.55.0
 	k8s.io/kubernetes v1.20.5
 	k8s.io/mount-utils v0.24.2
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9
