@@ -47,7 +47,7 @@ images:
 
   - name: node-registrar
     newName: k8s.gcr.io/sig-storage/csi-node-driver-registrar
-    newTag: "v2.5.1"
+    newTag: "v2.17.0@sha256:f9de845b170155199f2a2a3f9531cf13d78e31235e9db6b6582a8b0db0a50dad"
 
   - name: liveness-probe
     newName: k8s.gcr.io/sig-storage/livenessprobe
