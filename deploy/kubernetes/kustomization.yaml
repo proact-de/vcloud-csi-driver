@@ -51,4 +51,4 @@ images:
 
   - name: liveness-probe
     newName: k8s.gcr.io/sig-storage/livenessprobe
-    newTag: "v2.7.0"
+    newTag: "v2.19.0@sha256:06da0d5b8908072f2e4522692aee8dc119fba7247a9658497e1153992cd777e9"
